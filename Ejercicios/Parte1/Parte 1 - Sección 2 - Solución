@@ -1,0 +1,248 @@
+unObjeto m1. 67. 67 .
+
+"Arrays"
+x := #(5 4 3 2 1). #(5 4 3 2 1) .
+x at: 1 put: 42. 42 .
+#(42 4 3 2 1). #(42 4 3 2 1) .
+x at: 6 put: 24 "Genera un error"
+
+"Ordered collections"
+y := OrderedCollection with: 4 with: 3 with: 2 with: 1.
+y add: 42. 42 .
+y add: 2. 2 .
+y size. 7 .
+y occurrencesOf: 2. 2 .
+
+"Sets"
+x := Set new.
+x add: 4. 4 .
+x addAll: #(2 1). #(2 1) .
+x size. 3 .
+x occurrencesOf: 2. 1 .
+
+"Dictionaries"
+x := Dictionary new.
+x add: #a->4; add: #b->3; add: #c->1; add: #d->2. #d -> 2 .
+x add:#e->42. #e -> 42 .
+x size. 5 .
+x keys. #(#b #a #e #d #c) .
+x values. #(3 4 42 2 1) .
+x at: #a ifAbsent: [nil]. 4 .
+x at: #z ifAbsent: [^24]. 24 .
+
+"Convertions"
+x := Array new: 15.  "Creates an empty array with space for 15 elements"
+x := #(5 4 3 2 1). #(5 4 3 2 1) .
+x asOrderedCollection.
+x asSet.
+
+x := Dictionary new.
+x add: #a->4; add: #b->3; add:#c->1; add: #d->2.
+x asArray. #(3 4 2 1) .
+
+"Pruebas"
+"1.4 Impares con While"
+| elements index odds |
+elements:= #(1 2 5 6 9).
+odds := OrderedCollection new.
+index := 1.
+[index <= elements size]
+whileTrue: [
+((elements at: index) odd) ifTrue: [odds add: (elements at: index)].
+index := index +1.
+].
+^odds
+
+
+"1.8 Impares con To: Do:"
+| elements odds |
+elements:= #(1 3 5 7 9).
+odds := OrderedCollection new.
+1 to: (elements size) do: 
+	[:n | 
+		((elements at: n) odd) ifTrue: [odds add: (elements at: n)]
+		].
+^odds
+
+"Mejor"
+| elements odds |
+elements:= #(2 3 4 5 6 7 9).
+odds := OrderedCollection new.
+elements do: 
+	[:element |
+	(element odd) ifTrue: [odds add: element].
+	].
+^odds.
+
+
+"1.9 Impares con Select"
+| elements odds |
+elements:= #(1 2 5 6 9).
+odds := OrderedCollection new.
+odds := elements select:[:each | each odd].
+^odds.
+
+
+"Selecciona todos los elementos"
+|elements odds|
+elements:= #(2 3 4 5 6).
+odds := elements select:[:element |
+	true
+	].
+odds.
+
+
+"1.10 Doble con While"
+| elements index odds |
+elements:= #(1 2 5 6 9).
+odds := OrderedCollection new.
+index := 1.
+[index <= (elements size)] whileTrue: [
+	odds add: ((elements at: index) * 2).
+	index := index +1.
+	].
+^odds.
+
+"1.11 Doble con Select"
+|elements dobles|
+elements := #(1 2 3 4 5).
+dobles := OrderedCollection new.
+dobles := elements select: [:element| 
+	[true].
+	].
+^dobles.
+
+"Dobles con Do"
+|elements dobles|
+elements := #(1 2 3 4 5).
+dobles := OrderedCollection new.
+elements do: [:element | dobles add: (element * 2)].
+^dobles.
+
+
+"1.12 Doble con collect"
+|elements|
+elements := #(1 2 3 4 5).
+elements collect: [:element | 2 * element ].
+
+
+"1.13 primerPar "
+|elements res|
+elements := #(1 7 3 5).
+res := 0.
+res := elements findFirst: [:element | element even].
+^res.
+ 
+
+"primerPar con while"
+|elements index|
+elements := #(1 3 5).
+index := 1.
+[(index < elements size) and: ((elements at: index) odd)] whileTrue: [ index := index + 1].
+^elements at: index.
+
+
+"primerPar con do"
+|elements res|
+elements := #(1 3 5 1 3 5 7 9 1111).
+res := 0.
+elements do: [:element | ((element even) and: (res == 0)) ifTrue: [res := element].].
+^res.
+
+
+"1.15 primerPar con mensaje de error"
+|elements res|
+elements := #(1 7 3 5 2).
+res := 0.
+res := elements findFirst: [:element | element even].
+(res = 0) ifTrue: [self error: 'No hay pares'] ifFalse: [^elements at: res].
+
+
+"1.16 sumaElementos"
+|elements res index|
+elements := #(1 2 3 4 5 6).
+index := 1.
+res := 0.
+[index <= (elements size)] whileTrue: [
+	res := res + (elements at: index).
+	index := index + 1.
+	].
+^res.
+
+"sumaElementos con Do:"
+|elements res|
+elements := #(1 2 3 4 5 6).
+res := 0.
+elements do: [:element | res := res + element].
+^res.
+
+"sumaElementos con Sum "
+|elements|
+elements := #(1 2 3 4 5 6).
+elements sum.
+
+"sumaElementos con Inject: Into:"
+|elements|
+elements := #(1 2 3 4 5 6).
+elements inject: 0 into: [:subTotal :next | subTotal + next].
+
+
+"1.18 extraerVocales"
+|string|
+string := 'Hola'.
+string select:[:char | char isVowel].
+
+"2.a"
+"A block represents a deferred sequence of actions."
+"2.b"
+"The object returned after a value message is sent to a block is the
+value of the last expression in the sequence. if an empty block is sent
+a value message then nil is returned."
+
+"2.c"
+| x |
+x := [ y := 1. z := 2. ].
+x value.
+
+"2.I"
+| x |
+x := [ y := 1. z := 2. ].
+x value.
+y.
+
+"2.II"
+| x y |
+x := [ y := 1. z := 2. ].
+x value.
+y.
+
+"2.III"
+"El binaryBlock del insert into que te permitia sumar un elemento actual y el siguiente."
+
+
+
+"3.a"
+"Symbols are objects that represent strings used for names in the system. The literal representation of a symbol is a sequence of alphanumeric characters preceded by a pound sign, for example,
+#bill
+#M63
+There will never be two symbols with the same characters; each symbol
+is unique. This makes it possible to compare symbols efficiently. "
+
+"3.b"
+| x y |
+x := #pepe.
+y := #pepe.
+x = y.
+
+"3.c"
+#Hello , #World, #!
+
+
+
+
+
+
+
+
+
+
