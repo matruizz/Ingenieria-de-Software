@@ -102,7 +102,7 @@ elements do: [:element |(element odd) ifTrue: [odds add: element].].
 "No hay que tener en cuenta el tamanio del array"
 
 
-"1.9 Impares con Select"
+"1.9 Volver a convertir el algoritmo sin cambiar su comportamiento pero usando el mensaje #select: en lugar de #do ¿qué ventaja tiene la nueva versión? "
 | elements odds |
 elements:= #(1 2 5 6 9).
 odds := OrderedCollection new.
@@ -119,7 +119,7 @@ odds := elements select:[:element |
 odds.
 
 
-"1.10 Doble con While"
+"1.10 Crear una secuencia similar a la de 1.1 pero que obtenga el doble de cada elemento de la colección."
 | elements index odds |
 elements:= #(1 2 5 6 9).
 odds := OrderedCollection new.
@@ -130,7 +130,7 @@ index := 1.
 	].
 ^odds.
 
-"1.11 Doble con Select"
+"1.11 Reescribir el algoritmo utilizando while y luego utilizando do ¿Donde se acumulan los resultados?"
 |elements dobles|
 elements := #(1 2 3 4 5).
 dobles := OrderedCollection new.
@@ -147,13 +147,13 @@ elements do: [:element | dobles add: (element * 2)].
 ^dobles.
 
 
-"1.12 Doble con collect"
+"1.12  Encontrar luego un mensaje mejor en colecciones y dejar el algoritmo más compacto. ¿Qué retorna el nuevo mensaje?"
 |elements|
 elements := #(1 2 3 4 5).
 elements collect: [:element | 2 * element ].
 
 
-"1.13 primerPar "
+"1.13 Crear una nueva secuencia de colaboraciones para encontrar el primer número par, utilizando otro mensaje de colecciones. Como siempre primero con while: luego con do: y luego con un mensaje específico. Ejemplo: dado #(1 2 5 6 9)  debería retornar 2"
 |elements res|
 elements := #(1 7 3 5).
 res := 0.
@@ -176,8 +176,10 @@ res := 0.
 elements do: [:element | ((element even) and: (res == 0)) ifTrue: [res := element].].
 ^res.
 
+"1.14 Utilizar la secuencia de colaboraciones con una colección sin pares. Por ejemplo #(1  5  9). ¿Qué ocurre? "
+"Tira el numero con el que se inicializo  el res."
 
-"1.15 primerPar con mensaje de error"
+"1.15 Modificar la secuencia para generar un error en caso de no contener pares utilizando self error: ‘No hay pares’. Evaluarlo en una colección con pares (retorna el primero) y sin pares (se genera un error con el mensaje específico)"
 |elements res|
 elements := #(1 7 3 5 2).
 res := 0.
@@ -185,7 +187,7 @@ res := elements findFirst: [:element | element even].
 (res = 0) ifTrue: [self error: 'No hay pares'] ifFalse: [^elements at: res].
 
 
-"1.16 sumaElementos"
+"1.16 Sumar los números de una colección utilizando primero while, luego do y luego un mensaje de sumar colecciones. Hay un mensaje específico para la suma y otro para acumular elementos llamado inject:into: Solucionarlo utilizando ambos."
 |elements res index|
 elements := #(1 2 3 4 5 6).
 index := 1.
@@ -213,60 +215,85 @@ elements sum.
 elements := #(1 2 3 4 5 6).
 elements inject: 0 into: [:subTotal :next | subTotal + next].
 
+"1.17 ¿Cuántos colaboradores recibe inject:into: ? Pruebe debuggearlo con el menú o poniendo self halt. antes de las colaboraciones (esto detendrá la ejecución y abrirá el debugger)"
+"Recibe 3 colaboradores"
 
-"1.18 extraerVocales"
+"1.18 Crear una nueva secuencia para extraer únicamente las vocales en el orden que aparecen en un string."
 |string|
 string := 'Hola'.
 string select:[:char | char isVowel].
 
-"2.a"
+"1.19 ¿Qué observa con respecto a los strings y otras colecciones?"
+"Los strings son inmutables, solo se pueden concatenar y ya, no se pueden modificar."
+
+"1.20 ¿Conocía estos mensajes de colecciones de materias anteriores? ¿Cómo se llamaban? "
+"for, while y case"
+
+"2. Bloques (Closures)"
+"A. ¿Cuál es la definición de Blocks que se encuentra en el libro Smalltalk-80 The Language and its Implementation.?"
 "A block represents a deferred sequence of actions."
-"2.b"
+
+"B. ¿Qué valor retorna un Block cuando se evalúa (con value)? "
 "The object returned after a value message is sent to a block is the
 value of the last expression in the sequence. if an empty block is sent
 a value message then nil is returned."
 
-"2.c"
+"c. Evaluar en el Workspace lo siguiente: "
 | x |
 x := [ y := 1. z := 2. ].
-x value.
+x value. 2 .
 
-"2.I"
+"i. ¿Qué sucede si queremos acceder a una variable definida en el bloque desde fuera del bloque? "
 | x |
 x := [ y := 1. z := 2. ].
 x value.
 y.
 
-"2.II"
+"ii¿Qué sucede al acceder a una variable definida fuera del bloque desde dentro del bloque?"
 | x y |
 x := [ y := 1. z := 2. ].
 x value.
 y.
 
-"2.III"
+"iii Dé un ejemplo de un bloque con dos parámetros y su evaluación. "
 "El binaryBlock del insert into que te permitia sumar un elemento actual y el siguiente."
 
 
-
-"3.a"
+"3 - Simbolos"
+"a. ¿Cuál es la definición de Symbol que se encuentra en el libro Smalltalk-80 The Language and its Implementation.?"
 "Symbols are objects that represent strings used for names in the system. The literal representation of a symbol is a sequence of alphanumeric characters preceded by a pound sign, for example,
 #bill
 #M63
 There will never be two symbols with the same characters; each symbol
 is unique. This makes it possible to compare symbols efficiently. "
 
-"3.b"
+"b. Evalúe en el Workspace: "
 | x y |
 x := #pepe.
 y := #pepe.
 x = y.
 
-"3.c"
-#Hello , #World, #!
+"c¿Cuál es el resultado de concatenar símbolos? "
+#Hello , #World, #!.
 
 
+"4.2 Evalúe estas colaboraciones"
+10 * peso +  10 * dollar 
+"¿Qué resultado esperaba? ¿Cuál Obtuvo?"
+"Esperaba un error, es lo que obtuve."
 
+"4.3  Evalúe estas colaboraciones anotando previamente que resultado cree va a obtener"
+10 * peso +( 10 * dollar) 10 * dollars+10 * pesos .
+10 * peso +( 10 * dollar) - (2 * dollar) 10 * pesos+8 * dollars .
+10 * peso +( 10 * dollar) - (2 * dollar) - (8 * dollar)  10 * pesos .
+"4.4 ¿Qué es peso? inspecciónelo: peso inspect"
+"Es un undefined object: nill"
+"4.5 ¿qué es 10 * peso? evalúe: "
+10*peso
+"es un simple amount tiene las variables  amount = 10 y unit = peso"
 
+peso := BaseUnit nameForOne:  'peso' nameForMany:  'pesos' sign: $$
+10
 
 
 
