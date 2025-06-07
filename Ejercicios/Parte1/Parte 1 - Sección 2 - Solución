@@ -1,78 +1,105 @@
 unObjeto m1. 67. 67 .
 
-"Arrays"
-x := #(5 4 3 2 1). #(5 4 3 2 1) .
-x at: 1 put: 42. 42 .
-#(42 4 3 2 1). #(42 4 3 2 1) .
-x at: 6 put: 24 "Genera un error"
+"1 Colecciones"
+"1.1 Acerca de algunas colecciones muy utilizadas"
 
-"Ordered collections"
+"A - Arrays fiexed length collection"
+x := Array with:5 with:4 with:3 with:2 #(5 4 3 2) .
+x := #(5 4 3 2 1). #(5 4 3 2 1) ."Sintaxis reducida para crear arrays"
+"-Crear un array usando alguna de las sintaxis anteriores."
+x := #(5 4 3 2). #(5 4 3 2) .
+"-Cambiar el elemento en la primera posición con el valor 42."
+x at: 1 put: 42. 42 .
+#(42 4 3 2 1). #(42 4 3 2 1).
+"-¿Qué pasa si queremos agregar un elemento en la posición 5?"
+x at: 5 put: 24. "Genera un error"
+
+
+"B - Ordered collections"
 y := OrderedCollection with: 4 with: 3 with: 2 with: 1.
+"-Agregar elemento 42."
 y add: 42. 42 .
+"-Agregar elemento 2."
 y add: 2. 2 .
+"Cuántos elementos tiene la colección?"
 y size. 7 .
+"¿Cuántas veces aparece el 2"
 y occurrencesOf: 2. 2 .
 
-"Sets"
+
+"C - Sets"
+x := Set with: 4 with: 3 with: 2 with: 1.
 x := Set new.
-x add: 4. 4 .
-x addAll: #(2 1). #(2 1) .
-x size. 3 .
+"-Agregar elemento 42."
+x add: 42. 42 .
+x addAll: #(3 1). #(3 1) .
+"-Agregar elemento 2."
+x add: 2. 2 .
+"-¿Cuántos elementos tiene la colección?"
+x size. 4 .
+"-¿Cuántas veces aparece el 2"
 x occurrencesOf: 2. 1 .
 
-"Dictionaries"
+
+"D - Dictionaries"
 x := Dictionary new.
 x add: #a->4; add: #b->3; add: #c->1; add: #d->2. #d -> 2 .
+"-Agregar la key #e con el value 42. "
 x add:#e->42. #e -> 42 .
+"-¿Cuántos elementos tiene la colección?"
 x size. 5 .
+"Listar las keys."
 x keys. #(#b #a #e #d #c) .
+" Listar los values"
 x values. #(3 4 42 2 1) .
-x at: #a ifAbsent: [nil]. 4 .
+" Obtener el value del key #a."
+x at: #a. 4 .
+" Obtener el value del key #z (en caso de no encontrarlo retornar 24) "
 x at: #z ifAbsent: [^24]. 24 .
 
-"Convertions"
+
+"1.2 Conversión de colecciones"
+
+"E - Convertir el Array del punto a en una OrderedCollection y en un Set."
 x := Array new: 15.  "Creates an empty array with space for 15 elements"
 x := #(5 4 3 2 1). #(5 4 3 2 1) .
 x asOrderedCollection.
 x asSet.
-
+"F - Convertir el Set del punto c en Array"
+x asArray.
+"g - ¿Qué retorna convertir el Dictionary en Array?"
 x := Dictionary new.
 x add: #a->4; add: #b->3; add:#c->1; add: #d->2.
 x asArray. #(3 4 2 1) .
+"Retorna un array de los values"
 
-"Pruebas"
-"1.4 Impares con While"
-| elements index odds |
-elements:= #(1 2 5 6 9).
-odds := OrderedCollection new.
+
+"1.3 Crear una secuencia de colaboraciones para encontrar los elementos impares en un arreglo."
+
+| elements index odds | 
+elements:= #(1 2 5 3 9). 
+odds := OrderedCollection new. 
 index := 1.
-[index <= elements size]
-whileTrue: [
-((elements at: index) odd) ifTrue: [odds add: (elements at: index)].
-index := index +1.
-].
-^odds
+[index <= elements size] whileTrue: [ 
+	((elements at: index) odd) ifTrue: [
+		odds add: (elements at: index)
+		]. 
+	index := index +1. 
+	].
+^odds.
 
 
-"1.8 Impares con To: Do:"
-| elements odds |
-elements:= #(1 3 5 7 9).
-odds := OrderedCollection new.
-1 to: (elements size) do: 
-	[:n | 
-		((elements at: n) odd) ifTrue: [odds add: (elements at: n)]
-		].
-^odds
+"1.5 Usar las opciones. Do it, print It, Inspect It , Explore It, Debug It. Comprobar que es lo que hace cada una."
+"1.6 Cambiar los elementos de la colección elements para comprobar que las colaboraciones funcionan"
+"1.7 Enumerar los problemas que tiene ese algoritmo según lo visto en la carrera."
 
-"Mejor"
+"1.8 Convertir el script de 1.4 sin usar #whileTrue, utilizando el mensaje #do:, ¿qué ventaja tiene la nueva versión?"
 | elements odds |
 elements:= #(2 3 4 5 6 7 9).
 odds := OrderedCollection new.
-elements do: 
-	[:element |
-	(element odd) ifTrue: [odds add: element].
-	].
+elements do: [:element |(element odd) ifTrue: [odds add: element].].
 ^odds.
+"No hay que tener en cuenta el tamanio del array"
 
 
 "1.9 Impares con Select"
@@ -236,7 +263,6 @@ x = y.
 
 "3.c"
 #Hello , #World, #!
-
 
 
 
