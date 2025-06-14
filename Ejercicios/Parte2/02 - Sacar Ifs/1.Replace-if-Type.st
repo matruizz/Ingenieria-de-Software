@@ -10,13 +10,6 @@ initialize
 
 	speed := 0 * kilometer / hour.! !
 
-!Vehicle methodsFor: 'initialization' stamp: 'ARM 4/29/2024 11:00:51'!
-initializeWithType: typeToTake
-
-	type := typeToTake.
-	speed := 0 * kilometer / hour.
-	altitude := 0 * meter! !
-
 
 !Vehicle methodsFor: 'move' stamp: 'merb 6/14/2025 01:35:55'!
 accelerate
@@ -29,22 +22,6 @@ accelerate
 		
 	type = #Motorcycle
 		ifTrue:[speed := speed + (20 * kilometer / hour)]."! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Vehicle class' category: #'1.Replace-if-Type'!
-Vehicle class
-	instanceVariableNames: ''!
-
-!Vehicle class methodsFor: 'instance creation' stamp: 'ARM 4/29/2024 11:00:51'!
-helicopter
-
-	^self new initializeWithType: #Helicopter! !
-
-!Vehicle class methodsFor: 'instance creation' stamp: 'ARM 4/29/2024 11:00:51'!
-motorcycle
-
-	^self new initializeWithType: #Motorcycle! !
 
 
 !classDefinition: #Helicopter category: #'1.Replace-if-Type'!
