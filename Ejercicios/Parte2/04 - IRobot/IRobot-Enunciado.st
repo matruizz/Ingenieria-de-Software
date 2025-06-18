@@ -434,16 +434,17 @@ Object subclass: #Cashier
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!Cashier methodsFor: 'closing buy order' stamp: 'merb 6/17/2025 13:02:05'!
+!Cashier methodsFor: 'closing buy order' stamp: 'merb 6/18/2025 01:28:12'!
 receiveOrderFrom: aRobot
-	
-	aRobot status = #WorkingNormal ifTrue: [ | aTrailer | 
+	^aRobot status beforeReceivingCheckStatusOf: aRobot thenDeliverTo: self.
+
+	"aRobot status = #WorkingNormal ifTrue: [ | aTrailer | 
 		aTrailer := aRobot trailer.	
-		self assertTrailerNotEmpty: aTrailer.
+		self assertTrailerNotEmpty: aTrailer."
 		
 		"Comentario: en este punto el cashier realizaría el checkout de los productos."
 		
-		^ true
+		"^ true
 	].
 
 	aRobot status = #SensorsFailure ifTrue: [ 	
@@ -455,12 +456,40 @@ receiveOrderFrom: aRobot
 		aRobot outOfOrder.
 		
 		aTrailer := aRobot trailer.	
-		self assertTrailerNotEmpty: aTrailer.
+		self assertTrailerNotEmpty: aTrailer."
 		
 		"Comentario: en este punto el cashier realizaría el checkout de los productos."
 
-		^ true
-	].
+		"^ true
+	]."
+! !
+
+!Cashier methodsFor: 'closing buy order' stamp: 'merb 6/18/2025 00:47:05'!
+receiveOrderFromAMecanicalFailureRobot: aRobot
+	| aTrailer |
+	aRobot outOfOrder.
+		
+	aTrailer := aRobot trailer.	
+	self assertTrailerNotEmpty: aTrailer.
+
+	"Comentario: en este punto el cashier realizaría el checkout de los productos."
+
+	^true.! !
+
+!Cashier methodsFor: 'closing buy order' stamp: 'merb 6/18/2025 00:46:11'!
+receiveOrderFromASensorsFailureRobot: aRobot
+	aRobot outOfOrder.
+	self signalRobotSensorsFailure.! !
+
+!Cashier methodsFor: 'closing buy order' stamp: 'merb 6/18/2025 00:45:03'!
+receiveOrderFromAWorkingNormalRobot: aRobot
+	| aTrailer | 
+	aTrailer := aRobot trailer.	
+	self assertTrailerNotEmpty: aTrailer.
+		
+	"Comentario: en este punto el cashier realizaría el checkout de los productos."
+		
+	^ true.
 ! !
 
 
@@ -638,7 +667,7 @@ Object subclass: #Robot
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!Robot methodsFor: 'actions' stamp: 'merb 6/17/2025 12:56:25'!
+!Robot methodsFor: 'actions' stamp: 'merb 6/18/2025 01:27:19'!
 closeOrderUsing: aCashier
 	"
 	status = #WorkingNormal ifTrue: [ ^ aCashier receiveOrder: self ].
@@ -646,11 +675,11 @@ closeOrderUsing: aCashier
 	status = #MechanicalFailure ifTrue: [ ^ aCashier receiveOrder: self ].
 	status = #OutOfOrder ifTrue: [ ^ self class signalOutOfOrder ].
 	"
-	status thisCashierReceivesOrder: aCashier.! !
+	^status thisCashierReceivesOrder: aCashier.! !
 
-!Robot methodsFor: 'actions' stamp: 'merb 6/17/2025 13:01:18'!
+!Robot methodsFor: 'actions' stamp: 'merb 6/18/2025 01:28:00'!
 deliversOrderTo: aCashier
-	^ aCashier receiveOrderFrom: self.! !
+	^aCashier receiveOrderFrom: self.! !
 
 !Robot methodsFor: 'actions' stamp: 'merb 6/17/2025 12:28:40'!
 generateSignalForOutOfOrderStatus
@@ -661,7 +690,7 @@ generateSignalForOutOfOrderStatus
 putProductInTrailer: aProduct
 	^ trailer carry: aProduct.! !
 
-!Robot methodsFor: 'actions' stamp: 'merb 6/17/2025 12:21:04'!
+!Robot methodsFor: 'actions' stamp: 'merb 6/18/2025 00:25:50'!
 take: aProduct
 	"
 	status = #WorkingNormal ifTrue: [ ^ trailer carry: aProduct ].
@@ -669,7 +698,7 @@ take: aProduct
 	status = #MechanicalFailure ifTrue: [ ^ trailer carry: aProduct ].
 	status = #OutOfOrder ifTrue: [ ^ self class signalOutOfOrder ].
 	"
-	status carryOnThisRobot: self thisProduct: aProduct.
+	status carryOnRobotThisProduct: aProduct.
 ! !
 
 
@@ -760,8 +789,12 @@ Object subclass: #Status
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!Status methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:21:27'!
-carryOnThisRobot: trailer thisProduct: aProduct.
+!Status methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:53:16'!
+beforeReceivingCheckStatusOf: aRobot thenDeliverTo: aCashier
+	self subclassResponsibility.! !
+
+!Status methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:25:49'!
+carryOnRobotThisProduct: aProduct.
 	^self subclassResponsibility.! !
 
 !Status methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:31:08'!
@@ -790,13 +823,17 @@ Status subclass: #MechanicalFailure
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!MechanicalFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:39:43'!
-carryOnThisRobot: robot thisProduct: aProduct
-	robot putProductInTrailer: aProduct.! !
+!MechanicalFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 01:28:36'!
+beforeReceivingCheckStatusOf: aRobot thenDeliverTo: aCashier
+	^aCashier receiveOrderFromAMecanicalFailureRobot: aRobot.! !
 
-!MechanicalFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:58:02'!
+!MechanicalFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:25:50'!
+carryOnRobotThisProduct: aProduct
+	machine putProductInTrailer: aProduct.! !
+
+!MechanicalFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 01:31:53'!
 thisCashierReceivesOrder: aCashier
-	machine deliversOrderTo: aCashier.! !
+	^machine deliversOrderTo: aCashier.! !
 
 
 !classDefinition: #OutOfOrder category: #'IRobot-Enunciado'!
@@ -806,9 +843,13 @@ Status subclass: #OutOfOrder
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!OutOfOrder methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:28:26'!
-carryOnThisRobot: robot thisProduct: aProduct
-	robot generateSignalForOutOfOrderStatus.! !
+!OutOfOrder methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:54:19'!
+beforeReceivingCheckStatusOf: aRobot thenDeliverTo: aCashier
+	! !
+
+!OutOfOrder methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:25:50'!
+carryOnRobotThisProduct: aProduct
+	machine generateSignalForOutOfOrderStatus.! !
 
 !OutOfOrder methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:58:31'!
 thisCashierReceivesOrder: aCashier
@@ -822,9 +863,13 @@ Status subclass: #SensorsFailure
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!SensorsFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:39:54'!
-carryOnThisRobot: robot thisProduct: aProduct
-	robot putProductInTrailer: aProduct.! !
+!SensorsFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 01:28:50'!
+beforeReceivingCheckStatusOf: aRobot thenDeliverTo: aCashier
+	^aCashier receiveOrderFromASensorsFailureRobot: aRobot.! !
+
+!SensorsFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:25:50'!
+carryOnRobotThisProduct: aProduct
+	machine putProductInTrailer: aProduct.! !
 
 !SensorsFailure methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:57:52'!
 thisCashierReceivesOrder: aCashier
@@ -838,13 +883,17 @@ Status subclass: #WorkingNormal
 	poolDictionaries: ''
 	category: 'IRobot-Enunciado'!
 
-!WorkingNormal methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:40:02'!
-carryOnThisRobot: robot thisProduct: aProduct
-	robot putProductInTrailer: aProduct.! !
+!WorkingNormal methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 01:28:58'!
+beforeReceivingCheckStatusOf: aRobot thenDeliverTo: aCashier
+	^aCashier receiveOrderFromAWorkingNormalRobot: aRobot.! !
 
-!WorkingNormal methodsFor: 'as yet unclassified' stamp: 'merb 6/17/2025 12:55:33'!
+!WorkingNormal methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 00:25:50'!
+carryOnRobotThisProduct: aProduct
+	machine putProductInTrailer: aProduct.! !
+
+!WorkingNormal methodsFor: 'as yet unclassified' stamp: 'merb 6/18/2025 01:27:52'!
 thisCashierReceivesOrder: aCashier
-	machine deliversOrderTo: aCashier.! !
+	^machine deliversOrderTo: aCashier.! !
 
 
 !classDefinition: #Trailer category: #'IRobot-Enunciado'!
@@ -1028,3 +1077,19 @@ maxWeightExceededErrorDescription
 weightCapacityMustBeIntegerErrorDescription
 
 	^ 'Weight capacity must be integer'! !
+
+
+!classDefinition: #EmptyTrailer category: #'IRobot-Enunciado'!
+Trailer subclass: #EmptyTrailer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'IRobot-Enunciado'!
+
+
+!classDefinition: #NotEmptyTrailer category: #'IRobot-Enunciado'!
+Trailer subclass: #NotEmptyTrailer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'IRobot-Enunciado'!
